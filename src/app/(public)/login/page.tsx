@@ -1,11 +1,17 @@
+"use client";
 import { theme } from "@/theme";
 import { Button, Stack, Text, TextInput, Title } from "@mantine/core";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
+  const handleLoginWithGoogle = () => {
+    signIn("google", { callbackUrl: "/dashboard" });
+  };
+
   return (
-    <Stack align="center" justify="center" h="100vh" p={16} gap={50}>
+    <Stack w="100%" align="center" justify="center" h="100vh" p={16} gap={50}>
       <Stack align="center">
         <Title order={2} c={theme.colors.greenDark}>
           Login
@@ -14,7 +20,7 @@ const Login = () => {
       </Stack>
 
       {/* Inputs */}
-      <Stack w="100%">
+      <Stack w="100%" align="center">
         <TextInput label="E-mail" w="100%" maw={350} required />
         <TextInput label="Senha" w="100%" maw={350} required />
 
@@ -40,7 +46,14 @@ const Login = () => {
           ou
         </Text>
 
-        <Button w={50} h={50} p={0} radius="50%" bg={theme.colors.gray}>
+        <Button
+          w={50}
+          h={50}
+          p={0}
+          radius="50%"
+          bg={theme.colors.gray}
+          onClick={handleLoginWithGoogle}
+        >
           <FcGoogle size={30} />
         </Button>
       </Stack>
