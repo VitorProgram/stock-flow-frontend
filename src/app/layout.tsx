@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-br">
-      <body>
+      <body style={{ margin: 0, padding: 0, boxSizing: "border-box" }}>
         <MantineProvider>{children}</MantineProvider>
       </body>
     </html>
