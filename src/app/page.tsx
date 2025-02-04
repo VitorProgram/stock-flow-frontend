@@ -31,7 +31,7 @@ export default function Home() {
 
         <Text c={theme.colors.darkGray} fw={600} size="xs">
           Se não tem uma conta,{" "}
-          <Link href="/cadastro" style={{ color: theme.colors.greenDark }}>
+          <Link href="/register" style={{ color: theme.colors.greenDark }}>
             cadastre-se
           </Link>
           .
