@@ -1,9 +1,54 @@
+"use client";
 import { theme } from "@/theme";
 import { Button, Stack, Text, TextInput, Title } from "@mantine/core";
 import Link from "next/link";
+import { ChangeEvent, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
+import { useRouter } from "next/navigation";
 
 const Register = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+  const router = useRouter();
+
+  // Requisição de cadastro
+  const handleRegisterUser = async () => {
+    if (password !== confirmPassword) {
+      return alert("As senhas não conferem.");
+    }
+
+    try {
+      // Requisição post
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }, // Define  formato JSON
+        body: JSON.stringify({ email, password }), // Transforma os dados em JSON
+      });
+
+      // Lê a resposta do servidor como texto para evitar erro caso não seja um JSON válido
+      const responseText = await response.text();
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText); // Tenta converter a resposta para JSON
+      } catch {
+        throw new Error("Resposta inválida do servidor");
+      }
+
+      if (!response.ok) {
+        alert(responseData.error || "Erro no cadastro");
+        return;
+      }
+
+      alert("Usuário cadastrado com sucesso! Carregando página de login...");
+      router.push("/login");
+    } catch (error) {
+      console.error("Erro ao registrar:", error);
+      alert("Erro inesperado. Tente novamente.");
+    }
+  };
+
   return (
     <Stack align="center" justify="center" h="100vh" p={16} gap={40}>
       <Stack align="center">
@@ -14,10 +59,40 @@ const Register = () => {
       </Stack>
 
       {/* Inputs */}
-      <Stack w="100%">
-        <TextInput label="E-mail" w="100%" maw={350} required />
-        <TextInput label="Senha" w="100%" maw={350} required />
-        <TextInput label="Confirme a senha" w="100%" maw={350} required />
+      <Stack w="100%" align="center">
+        <TextInput
+          type="email"
+          label="E-mail"
+          w="100%"
+          maw={350}
+          required
+          value={email}
+          onChange={(ev: ChangeEvent<HTMLInputElement>) =>
+            setEmail(ev.target.value)
+          }
+        />
+        <TextInput
+          type="password"
+          label="Senha"
+          w="100%"
+          maw={350}
+          required
+          value={password}
+          onChange={(ev: ChangeEvent<HTMLInputElement>) =>
+            setPassword(ev.target.value)
+          }
+        />
+        <TextInput
+          type="password"
+          label="Confirme a senha"
+          w="100%"
+          maw={350}
+          required
+          value={confirmPassword}
+          onChange={(ev: ChangeEvent<HTMLInputElement>) =>
+            setConfirmPassword(ev.target.value)
+          }
+        />
 
         <Text c={theme.colors.darkGray} fw={500} size="xs">
           Se não tem uma conta,{" "}
@@ -33,7 +108,12 @@ const Register = () => {
 
       {/* Buttons */}
       <Stack w="100%" align="center">
-        <Button bg={theme.colors.greenDark} fullWidth maw={350}>
+        <Button
+          bg={theme.colors.greenDark}
+          fullWidth
+          maw={350}
+          onClick={handleRegisterUser}
+        >
           Cadastrar
         </Button>
 

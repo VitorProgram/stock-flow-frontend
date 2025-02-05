@@ -10,11 +10,11 @@ interface DashboardLayoutProps {
 }
 
 const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
-  const session = await getServerSession();
+  // const session = await getServerSession();
 
-  if (!session) {
-    return redirect("/");
-  }
+  // if (!session) {
+  //   return redirect("/");
+  // }
 
   return (
     <Stack bg={theme.colors.lightGray} h="100vh">
@@ -30,13 +30,15 @@ const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
         >
           {/* Left Section */}
           <Flex align="center" gap={8}>
-            <Avatar size={40} src={session.user?.image} />
+            {/* <Avatar size={40} src={session.user?.image} /> */}
+            <Avatar size={40} />
 
             <Stack gap={0}>
               <Text size="xs" c={theme.colors.gray}>
                 Bem vindo(a)
               </Text>
-              <Title order={4}>{session.user?.name}</Title>
+              {/* <Title order={4}>{session.user?.name}</Title> */}
+              <Title order={4}>Vitor</Title>
             </Stack>
           </Flex>
 
