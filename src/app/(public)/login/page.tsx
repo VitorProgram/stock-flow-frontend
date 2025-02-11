@@ -82,7 +82,7 @@ const Login = () => {
         <Text c={theme.colors.darkGray} fw={500} size="xs">
           Se não tem uma conta,{" "}
           <Link
-            href="/cadastro"
+            href="/register"
             style={{ color: theme.colors.greenDark, textDecoration: "none" }}
           >
             cadastre-se
