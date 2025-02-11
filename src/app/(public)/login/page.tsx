@@ -1,48 +1,32 @@
 "use client";
+import { useLogin } from "@/app/api/user/login";
 import { theme } from "@/theme";
 import { Button, Stack, Text, TextInput, Title } from "@mantine/core";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
-import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const handleLoginWithGoogle = () => {
-    signIn("google", { callbackUrl: "/dashboard" });
-  };
+  // Fazer login
+  const { mutate, isPending, isError, error } = useLogin();
 
   const router = useRouter();
 
-  const handleLoginWithCredentials = async () => {
-    try {
-      // Fazendo a requisição POST
-      const response = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      // Transofomrando a resposa tem string
-      const responseText = await response.text();
-      let responseData;
-      try {
-        responseData = JSON.parse(responseText); // mudando a resposta para JSON
-      } catch {
-        throw new Error("Resposta inválida do servidor");
+  const handleLogin = () => {
+    mutate(
+      { email, password },
+      {
+        onSuccess: () => {
+          router.push("/dashboard");
+        },
       }
+    );
 
-      // Se ocorrer algum erro
-      if (!response.ok) {
-        return alert(responseData.error || "Erro no cadastro");
-      }
-
-      // Se tudo certo, acesso liberado a dashboard
-      router.push("/dashboard");
-    } catch {}
+    setEmail("");
+    setPassword("");
   };
 
   return (
@@ -97,24 +81,9 @@ const Login = () => {
           bg={theme.colors.greenDark}
           fullWidth
           maw={350}
-          onClick={handleLoginWithCredentials}
+          onClick={handleLogin}
         >
           Entrar
-        </Button>
-
-        <Text c={theme.colors.greenDark} fw={600}>
-          ou
-        </Text>
-
-        <Button
-          w={50}
-          h={50}
-          p={0}
-          radius="50%"
-          bg={theme.colors.gray}
-          onClick={handleLoginWithGoogle}
-        >
-          <FcGoogle size={30} />
         </Button>
       </Stack>
     </Stack>

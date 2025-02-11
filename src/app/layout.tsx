@@ -4,6 +4,8 @@ import type { Metadata } from "next";
 // Mantine UI
 import "@mantine/core/styles.css";
 
+import ReactQueryProvider from "@/providers/ReactQueryProvider";
+
 export const metadata: Metadata = {
   title: "Stock Flow",
   description:
@@ -18,7 +20,9 @@ export default function RootLayout({
   return (
     <html lang="pt-br">
       <body style={{ margin: 0, padding: 0, boxSizing: "border-box" }}>
-        <MantineProvider>{children}</MantineProvider>
+        <ReactQueryProvider>
+          <MantineProvider>{children}</MantineProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

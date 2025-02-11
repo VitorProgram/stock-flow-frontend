@@ -1,52 +1,40 @@
 "use client";
+import { useCreateUser } from "@/app/api/user/register";
 import { theme } from "@/theme";
 import { Button, Stack, Text, TextInput, Title } from "@mantine/core";
 import Link from "next/link";
 import { ChangeEvent, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
-import { useRouter } from "next/navigation";
 
 const Register = () => {
+  const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  const router = useRouter();
+  // Adicionar usuário
+  const { mutate, isPending, isError, error } = useCreateUser();
 
-  // Requisição de cadastro
-  const handleRegisterUser = async () => {
-    if (password !== confirmPassword) {
-      return alert("As senhas não conferem.");
+  const handleRegisterUser = () => {
+    if (password != confirmPassword) {
+      return console.error(`
+        As senhas não conferem.
+        Senha inicial: ${password}  
+        Senha de confirmamção: ${confirmPassword}  
+      `);
     }
 
-    try {
-      // Requisição post
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }, // Define  formato JSON
-        body: JSON.stringify({ email, password }), // Transforma os dados em JSON
-      });
-
-      // Lê a resposta do servidor como texto para evitar erro caso não seja um JSON válido
-      const responseText = await response.text();
-      let responseData;
-      try {
-        responseData = JSON.parse(responseText); // Tenta converter a resposta para JSON
-      } catch {
-        throw new Error("Resposta inválida do servidor");
+    mutate(
+      { name, email, password },
+      {
+        onSuccess: () => alert(`${name} foi adicionado como novo usuário!`),
       }
+    );
 
-      if (!response.ok) {
-        alert(responseData.error || "Erro no cadastro");
-        return;
-      }
-
-      alert("Usuário cadastrado com sucesso! Carregando página de login...");
-      router.push("/login");
-    } catch (error) {
-      console.error("Erro ao registrar:", error);
-      alert("Erro inesperado. Tente novamente.");
-    }
+    setName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
   };
 
   return (
@@ -60,6 +48,17 @@ const Register = () => {
 
       {/* Inputs */}
       <Stack w="100%" align="center">
+        <TextInput
+          type="text"
+          label="Nome"
+          w="100%"
+          maw={350}
+          required
+          value={name}
+          onChange={(ev: ChangeEvent<HTMLInputElement>) =>
+            setName(ev.target.value)
+          }
+        />
         <TextInput
           type="email"
           label="E-mail"
@@ -95,12 +94,12 @@ const Register = () => {
         />
 
         <Text c={theme.colors.darkGray} fw={500} size="xs">
-          Se não tem uma conta,{" "}
+          Se já tem uma conta,{" "}
           <Link
-            href="/register"
+            href="/login"
             style={{ color: theme.colors.greenDark, textDecoration: "none" }}
           >
-            cadastre-se
+            faça login
           </Link>
           .
         </Text>
@@ -115,14 +114,6 @@ const Register = () => {
           onClick={handleRegisterUser}
         >
           Cadastrar
-        </Button>
-
-        <Text c={theme.colors.greenDark} fw={600}>
-          ou
-        </Text>
-
-        <Button w={50} h={50} p={0} radius="50%" bg={theme.colors.gray}>
-          <FcGoogle size={30} />
         </Button>
       </Stack>
     </Stack>
