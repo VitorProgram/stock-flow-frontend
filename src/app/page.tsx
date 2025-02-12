@@ -23,7 +23,10 @@ export default function Home() {
           Um sistema de gerenciamento de estoque ágil e eficiente para empresas.
         </Text>
 
-        <Link href="/login" style={{ width: "100%", maxWidth: "350px" }}>
+        <Link
+          href="/login"
+          style={{ width: "100%", maxWidth: "350px", textDecoration: "none" }}
+        >
           <Button fullWidth bg={theme.colors.greenDark}>
             Fazer Login
           </Button>

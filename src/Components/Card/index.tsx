@@ -1,3 +1,6 @@
+"use client";
+import { useDeleteCategory } from "@/app/api/categories/deleteCategory";
+import { useAuth } from "@/context/UserContext";
 import { theme } from "@/theme";
 import {
   Button,
@@ -13,15 +16,36 @@ import { MdDelete } from "react-icons/md";
 
 interface CardProps {
   name: string;
+  categoryId: string;
   imageUrl?: string;
   quantity?: number;
 }
 
-const Card = ({ name, imageUrl, quantity }: CardProps) => {
+const Card = ({ name, categoryId, imageUrl, quantity }: CardProps) => {
+  const { refreshUser } = useAuth();
+  const { mutate, isPending, isError, error } = useDeleteCategory();
+
+  const handleDeleteCategory = () => {
+    mutate(
+      { id: categoryId },
+      {
+        onSuccess: () => {
+          console.log(`Categoria ${name} deletada.`);
+          refreshUser();
+        },
+        onError: () => {
+          console.log({ error });
+          return;
+        },
+      }
+    );
+  };
+
   return (
     <Stack
       w="100%"
-      maw={500}
+      miw={250}
+      flex={1}
       gap={0}
       bg={theme.colors.white}
       style={{
@@ -56,7 +80,15 @@ const Card = ({ name, imageUrl, quantity }: CardProps) => {
           mb={5}
         />
 
-        <Button variant="transparent" p={0} h={25} w={25} c={theme.colors.red}>
+        <Button
+          variant="transparent"
+          p={0}
+          h={25}
+          w={25}
+          c={isError ? theme.colors.greenDark : theme.colors.red}
+          disabled={isPending}
+          onClick={handleDeleteCategory}
+        >
           <MdDelete size={15} />
         </Button>
       </Flex>
@@ -78,7 +110,7 @@ const Card = ({ name, imageUrl, quantity }: CardProps) => {
           </Title>
         </Stack>
 
-        {(imageUrl === "" || imageUrl === undefined) && (
+        {(imageUrl !== "" || imageUrl != undefined) && (
           <Image src={imageUrl} w={40} h={40} />
         )}
       </Flex>

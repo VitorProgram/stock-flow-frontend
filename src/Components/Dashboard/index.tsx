@@ -1,6 +1,6 @@
 "use client";
 import { theme } from "@/theme";
-import { Center, Stack, Text, Title } from "@mantine/core";
+import { Center, Flex, Stack, Text, Title } from "@mantine/core";
 import Modal from "../Modal";
 import Card from "../Card";
 import { useAuth } from "@/context/UserContext";
@@ -8,8 +8,6 @@ import { useAuth } from "@/context/UserContext";
 const Dashboard = () => {
   const { user } = useAuth();
   const categories = user?.categories || [];
-
-  console.log({ categories });
 
   return (
     <Stack
@@ -32,15 +30,17 @@ const Dashboard = () => {
         </Title>
       )}
 
-      <Stack gap={24}>
+      <Flex wrap="wrap" gap={24}>
         {categories?.map((category) => (
           <Card
             key={category.id}
             name={category.name}
+            categoryId={category.id}
             quantity={category.items.length}
+            imageUrl={`/icons/${category.name.toLocaleLowerCase()}.svg`}
           />
         ))}
-      </Stack>
+      </Flex>
     </Stack>
   );
 };

@@ -15,12 +15,36 @@ import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import { BiPlus } from "react-icons/bi";
 import { FiSearch } from "react-icons/fi";
+import { useCreateCategory } from "@/app/api/categories/createCategory";
+import { useAuth } from "@/context/UserContext";
 
 const Modal = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [categoryName, setCategoryName] = useState<string>("");
   const [categoryError, setCategoryError] = useState<boolean>(false);
 
+  const { user, refreshUser } = useAuth();
+  const { mutate, isPending, isError, error } = useCreateCategory();
+
+  const handleAddCategory = () => {
+    if (categoryName === "") return setCategoryError(true);
+
+    mutate(
+      { name: categoryName, userId: user?.id as string },
+      {
+        onSuccess: () => {
+          console.log(`Categoria ${categoryName} criada.`);
+          refreshUser();
+          close();
+        },
+        onError: () => {
+          setCategoryError(true);
+          console.log({ error });
+          return;
+        },
+      }
+    );
+  };
 
   return (
     <>
@@ -30,6 +54,7 @@ const Modal = () => {
           leftSection={<FiSearch size={20} />}
           placeholder="Pesquisar"
           type="search"
+          flex={1}
         />
 
         <Divider orientation="vertical" color={theme.colors.darkGray} />
@@ -54,7 +79,7 @@ const Modal = () => {
       >
         {categoryError && (
           <Text c={theme.colors.red} size="sm" mb={8}>
-            Adicione uma categoria
+            Erro ao adicionar uma categoria
           </Text>
         )}
 
@@ -74,6 +99,8 @@ const Modal = () => {
           mt={16}
           fullWidth
           bg={theme.colors.greenPrimary}
+          loading={isPending}
+          onClick={handleAddCategory}
         >
           Adicionar
         </Button>
