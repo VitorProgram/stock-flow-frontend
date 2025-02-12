@@ -1,23 +1,15 @@
+"use client";
 import { theme } from "@/theme";
 import { Center, Stack, Text, Title } from "@mantine/core";
 import Modal from "../Modal";
 import Card from "../Card";
+import { useAuth } from "@/context/UserContext";
 
 const Dashboard = () => {
-  const data = [
-    {
-      id: Math.floor(Math.random() * 1000000),
-      name: "Escritório",
-      imageUrl: "/icons/escritório.svg",
-      quantity: 10,
-    },
-    {
-      id: Math.floor(Math.random() * 1000000),
-      name: "Outros",
-      imageUrl: "/icons/outros.svg",
-      quantity: 45,
-    },
-  ];
+  const { user } = useAuth();
+  const categories = user?.categories || [];
+
+  console.log({ categories });
 
   return (
     <Stack
@@ -28,7 +20,7 @@ const Dashboard = () => {
     >
       <Modal />
 
-      {data.length === 0 ? (
+      {categories?.length === 0 || categories === undefined ? (
         <Center h={400} w="100%">
           <Text size="sm" fw={700} c={theme.colors.greenDark}>
             Adicione alguma categoria
@@ -41,12 +33,11 @@ const Dashboard = () => {
       )}
 
       <Stack gap={24}>
-        {data.map((card) => (
+        {categories?.map((category) => (
           <Card
-            key={card.id}
-            name={card.name}
-            imageUrl={card.imageUrl}
-            quantity={card.quantity}
+            key={category.id}
+            name={category.name}
+            quantity={category.items.length}
           />
         ))}
       </Stack>

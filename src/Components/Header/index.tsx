@@ -1,8 +1,12 @@
+"use client";
+import { useAuth } from "@/context/UserContext";
 import { theme } from "@/theme";
 import { Avatar, Button, Flex, Stack, Text, Title } from "@mantine/core";
 import { IoMenu } from "react-icons/io5";
 
 const Header = () => {
+  const { user } = useAuth();
+
   return (
     <header>
       <Flex
@@ -22,7 +26,7 @@ const Header = () => {
             <Text size="xs" c={theme.colors.gray}>
               Bem vindo(a)
             </Text>
-            <Title order={4}>Vitor</Title>
+            <Title order={4}>{user?.name}</Title>
           </Stack>
         </Flex>
 

@@ -1,3 +1,4 @@
+import { axios } from "../../../../lib/axios"; // Instância configurada
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface UserProps {
@@ -7,32 +8,28 @@ interface UserProps {
 }
 
 const createUser = async ({ name, email, password }: UserProps) => {
-  const response = await fetch("http://localhost:3333/api/auth/register", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, password }),
-  });
-
-  // Se a requisição falhar, tentar extrair a mensagem de erro do backend
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => null);
-    const errorMessage = errorData?.message || "Erro ao criar usuário";
-
+  try {
+    const response = await axios.post("/auth/register", {
+      name,
+      email,
+      password,
+    });
+    return response.data; // Retorna os dados da resposta
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data?.message || "Erro ao criar usuário";
     throw new Error(errorMessage);
   }
-
-  return response.json();
 };
 
 // Hook do React Query para criar usuário
 export const useCreateUser = () => {
-  const queryClient = useQueryClient(); // Cliente do React Query para manipular cache
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: createUser,
-
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["registerUser"] });
     },
   });
 };

@@ -1,4 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { setCookie } from "cookies-next";
+import { axios } from "../../../../lib/axios";
 
 interface UserProps {
   email: string;
@@ -6,31 +8,31 @@ interface UserProps {
 }
 
 const login = async ({ email, password }: UserProps) => {
-  const response = await fetch("http://localhost:3333/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+  try {
+    const response = await axios.post("/auth/login", { email, password });
 
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => null);
-    const errorMessage =
-      errorData?.message || "Erro ao fazer login com o usuário";
+    const { token, user } = response.data;
 
-    throw new Error(errorMessage);
+    setCookie("token", token, { maxAge: 60 * 60 * 24 * 7, path: "/" });
+    setCookie("user", JSON.stringify(user), {
+      maxAge: 60 * 60 * 24 * 7,
+      path: "/",
+    });
+
+    return user;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || "Erro ao fazer login");
   }
-
-  return response.json();
 };
 
+// Hook do React Query para login
 export const useLogin = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: login,
-
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["loginUsers"] });
+      queryClient.invalidateQueries({ queryKey: ["loginUser"] });
     },
   });
 };

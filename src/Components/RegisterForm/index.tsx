@@ -1,5 +1,5 @@
 "use client";
-import { useLogin } from "@/app/api/user/login";
+import { useCreateUser } from "@/app/api/user/register";
 import { theme } from "@/theme";
 import { Button, Stack, Text, TextInput, Title } from "@mantine/core";
 import Link from "next/link";
@@ -8,15 +8,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 interface FormData {
+  firstName: string;
   email: string;
   password: string;
+  confirmPassword: string;
 }
 
-const Login = () => {
-  const { mutate, isPending, isError, error } = useLogin();
+const RegisterForm = () => {
+  const { mutate, isPending, isError, error } = useCreateUser();
   const [formError, setFormError] = useState<string>("");
-
-  const router = useRouter();
 
   const {
     register,
@@ -24,16 +24,22 @@ const Login = () => {
     formState: { errors },
   } = useForm<FormData>();
 
+  const router = useRouter();
+
   const onSubmit = (data: FormData) => {
+    if (data.password != data.confirmPassword)
+      return alert("As senhas não conferem");
+
     mutate(
-      { email: data.email, password: data.password },
+      { name: data.firstName, email: data.email, password: data.password },
       {
         onSuccess: () => {
-          alert(`${data.email} fez login! Carregando dashboard...`);
-          router.push("/dashboard");
+          alert(`${data.firstName} foi adicionado como novo usuário!`);
+          router.push("/login");
         },
         onError: () => {
-          setFormError("Erro ao fazer login, tente novamente");
+          router.push("/login");
+          setFormError("Erro ao cadastrar, tente novamente");
           console.log({ error });
           return;
         },
@@ -43,29 +49,39 @@ const Login = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Stack w="100%" align="center" justify="center" h="100vh" p={16} gap={50}>
+      <Stack align="center" justify="center" h="100vh" p={16} gap={40}>
         <Stack align="center">
           <Title order={2} c={theme.colors.greenDark}>
-            Login
+            Cadastro
           </Title>
-          <Text c={theme.colors.darkGray}>Faça login para continuar</Text>
-
-          {error && (
-            <Text c={theme.colors.red} size="xs">
-              {formError}
-            </Text>
-          )}
+          <Text c={theme.colors.darkGray}>
+            Crie sua conta em poucos cliques
+          </Text>
         </Stack>
+
+        {error && (
+          <Text c={theme.colors.red} size="xs">
+            Erro ao cadastrar, tente novamnte
+          </Text>
+        )}
 
         {/* Inputs */}
         <Stack w="100%" align="center">
+          <TextInput
+            type="text"
+            label="Primeiro Nome"
+            w="100%"
+            maw={350}
+            required
+            {...register("firstName")}
+          />
           <TextInput
             type="email"
             label="E-mail"
             w="100%"
             maw={350}
             required
-            {...register("email")}
+            {...register("email")} // name
           />
           <TextInput
             type="password"
@@ -73,20 +89,28 @@ const Login = () => {
             w="100%"
             maw={350}
             required
-            {...register("password")}
+            {...register("password")} // name
+          />
+          <TextInput
+            type="password"
+            label="Confirme a senha"
+            w="100%"
+            maw={350}
+            required
+            {...register("confirmPassword")} // name
           />
 
           <Text c={theme.colors.darkGray} fw={500} size="xs">
-            Se não tem uma conta,{" "}
+            Se já tem uma conta,{" "}
             <Link
-              href="/register"
+              href="/login"
               style={{
                 color: theme.colors.greenPrimary,
                 textDecoration: "none",
                 fontWeight: 700,
               }}
             >
-              cadastre-se
+              faça login
             </Link>
             .
           </Text>
@@ -101,7 +125,7 @@ const Login = () => {
             type="submit"
             loading={isPending}
           >
-            Entrar
+            Cadastrar
           </Button>
         </Stack>
       </Stack>
@@ -109,4 +133,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default RegisterForm;
