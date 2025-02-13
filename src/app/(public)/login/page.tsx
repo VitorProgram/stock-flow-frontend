@@ -29,7 +29,7 @@ const Login = () => {
       { email: data.email, password: data.password },
       {
         onSuccess: () => {
-          alert(`${data.email} fez login! Carregando dashboard...`);
+          console.log(`${data.email} fez login! Carregando dashboard...`);
           router.push("/dashboard");
         },
         onError: () => {

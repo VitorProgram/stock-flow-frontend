@@ -11,12 +11,13 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import { useRouter } from "next/navigation";
 import { BiEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 
 interface CardProps {
   name: string;
-  categoryId: string;
+  categoryId?: string;
   imageUrl?: string;
   quantity?: number;
 }
@@ -25,9 +26,15 @@ const Card = ({ name, categoryId, imageUrl, quantity }: CardProps) => {
   const { refreshUser } = useAuth();
   const { mutate, isPending, isError, error } = useDeleteCategory();
 
+  const router = useRouter();
+
+  const handleEditCategory = () => {
+    router.push(`/dashboard/category/${categoryId}`);
+  };
+
   const handleDeleteCategory = () => {
     mutate(
-      { id: categoryId },
+      { id: categoryId as string },
       {
         onSuccess: () => {
           console.log(`Categoria ${name} deletada.`);
@@ -68,7 +75,9 @@ const Card = ({ name, categoryId, imageUrl, quantity }: CardProps) => {
           p={0}
           h={25}
           w={25}
+          bg="none"
           c={theme.colors.greenPrimary}
+          onClick={handleEditCategory}
         >
           <BiEdit size={15} />
         </Button>
@@ -85,6 +94,7 @@ const Card = ({ name, categoryId, imageUrl, quantity }: CardProps) => {
           p={0}
           h={25}
           w={25}
+          bg="none"
           c={isError ? theme.colors.greenDark : theme.colors.red}
           disabled={isPending}
           onClick={handleDeleteCategory}

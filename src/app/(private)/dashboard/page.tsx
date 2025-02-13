@@ -1,10 +1,11 @@
 import Dashboard from "@/Components/Dashboard";
-import Header from "@/Components/Header";
+import Header from "@/Components/Headers";
+import HeaderHomePage from "@/Components/Headers/HeaderHomePage";
 
 const DashboardPage = async () => {
   return (
     <>
-      <Header />
+      <HeaderHomePage />
       <Dashboard />
     </>
   );
