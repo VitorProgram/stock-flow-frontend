@@ -3,9 +3,10 @@ import { Button, Text, Title } from "@mantine/core";
 import Header from "..";
 import { GoArrowLeft } from "react-icons/go";
 import { theme } from "@/theme";
-import { useGetCategory } from "@/app/api/categories/getCategory";
+import { useGetCategory } from "@/Components/Cards/@fn/category/getCategory";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "@/context/UserContext";
 
 interface HeaderCategoryPage {
   categoryId: string;
@@ -18,12 +19,14 @@ interface CategoryProps {
 
 const HeaderCategoryPage = ({ categoryId }: HeaderCategoryPage) => {
   const router = useRouter();
+  const { refreshUser } = useAuth();
   const { data, isLoading, error } = useGetCategory({ id: categoryId });
 
   const [loadingButton, setLoadingButton] = useState<boolean>(false);
 
-  const handleReturnToDashboard = () => {
+  const handleReturnToDashboard = async () => {
     setLoadingButton(true);
+    await refreshUser();
     router.push("/dashboard");
   };
 

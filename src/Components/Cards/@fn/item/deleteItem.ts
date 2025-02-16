@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { axios } from "../../../../lib/axios";
+import { axios } from "../../../../../lib/axios";
 
 interface DeleteItemProps {
   id: string;

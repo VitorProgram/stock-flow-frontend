@@ -15,7 +15,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import { BiPlus } from "react-icons/bi";
 import { FiSearch } from "react-icons/fi";
-import { useCreateCategory } from "@/app/api/categories/createCategory";
+import { useCreateCategory } from "@/Components/Cards/@fn/category/createCategory";
 import { useAuth } from "@/context/UserContext";
 
 const CategoryModal = () => {

@@ -1,12 +1,13 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { useGetCategory } from "@/app/api/categories/getCategory";
-import { Box, Flex, Stack, Text, Title } from "@mantine/core";
+import { useGetCategory } from "@/Components/Cards/@fn/category/getCategory";
+import { Box, Center, Flex, Stack, Text, Title } from "@mantine/core";
 import HeaderCategoryPage from "@/Components/Headers/HeaderCategoryPage";
 import { useAuth } from "@/context/UserContext";
-import Card from "@/Components/Card";
 import ItemModal from "@/Components/Modais/ItemModal";
+import CardItem from "@/Components/Cards/CardItem";
+import { theme } from "@/theme";
 
 // Interface para os itens dentro da categoria
 interface ItemProps {
@@ -44,18 +45,28 @@ const CategoryPage = () => {
         <ItemModal categoryId={id} />
       </Box>
 
-      {/* Lista de Itens */}
-      <Flex pl={16} pr={16} wrap="wrap" gap={24}>
-        {category?.items.map((item) => (
-          <Card
-            key={item.id}
-            name={item.name}
-            quantity={item.quantity}
-            isItem
-            itemId={item.id}
-          />
-        ))}
-      </Flex>
+      {category?.items.length === 0 ? (
+        <Center h={400}>
+          <Text size="sm" fw={700} c={theme.colors.greenDark}>
+            Adicione items a categoria
+          </Text>
+        </Center>
+      ) : (
+        <>
+          {/* Lista de Itens */}
+          <Flex pl={16} pr={16} wrap="wrap" gap={24}>
+            {category?.items.map((item) => (
+              <CardItem
+                key={item.id}
+                name={item.name}
+                quantity={item.quantity}
+                id={item.id}
+                categoryId={id}
+              />
+            ))}
+          </Flex>
+        </>
+      )}
     </Stack>
   );
 };

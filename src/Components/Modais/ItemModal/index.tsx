@@ -17,11 +17,14 @@ import { useDisclosure } from "@mantine/hooks";
 import { FormEvent, useState } from "react";
 import { BiPlus } from "react-icons/bi";
 import { FiSearch } from "react-icons/fi";
-import { useCreateCategory } from "@/app/api/categories/createCategory";
+import { useCreateCategory } from "@/Components/Cards/@fn/category/createCategory";
 import { useAuth } from "@/context/UserContext";
-import { useCreateItem } from "@/app/api/items/createItem";
+import { useCreateItem } from "@/Components/Cards/@fn/item/createItem";
 import { useForm } from "react-hook-form";
-import { getCategory, useGetCategory } from "@/app/api/categories/getCategory";
+import {
+  getCategory,
+  useGetCategory,
+} from "@/Components/Cards/@fn/category/getCategory";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface ItemModalProps {
@@ -53,7 +56,7 @@ const ItemModal = ({ categoryId }: ItemModalProps) => {
     mutate(
       {
         name: data.name,
-        quantity: Number(data.quantity),
+        quantity: data.quantity,
         categoryId: categoryId,
       },
       {
@@ -127,6 +130,7 @@ const ItemModal = ({ categoryId }: ItemModalProps) => {
                 placeholder="Quantidade"
                 miw={150}
                 flex={1}
+                min={0}
                 type="number"
                 {...register("quantity")}
               />

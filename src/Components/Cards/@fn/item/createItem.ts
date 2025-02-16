@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { axios } from "../../../../lib/axios";
+import { axios } from "../../../../../lib/axios";
 
 interface ItemProps {
   name: string;
@@ -11,7 +11,7 @@ const createItem = async ({ name, quantity, categoryId }: ItemProps) => {
   try {
     const response = await axios.post("/items", {
       name,
-      quantity,
+      quantity: Number(quantity),
       categoryId,
     });
 

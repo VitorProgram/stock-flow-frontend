@@ -2,8 +2,8 @@
 import { theme } from "@/theme";
 import { Center, Flex, Stack, Text, Title } from "@mantine/core";
 import CategoryModal from "../Modais/CategoryModal";
-import Card from "../Card";
 import { useAuth } from "@/context/UserContext";
+import CardCategory from "../Cards/CardCategory";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -32,12 +32,11 @@ const Dashboard = () => {
 
       <Flex wrap="wrap" gap={24}>
         {categories?.map((category) => (
-          <Card
+          <CardCategory
             key={category.id}
             name={category.name}
-            categoryId={category.id}
+            id={category.id}
             quantity={category.items.length}
-            imageUrl={`/icons/${category.name.toLocaleLowerCase()}.svg`}
           />
         ))}
       </Flex>
