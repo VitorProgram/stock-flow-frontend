@@ -18,7 +18,7 @@ import { FiSearch } from "react-icons/fi";
 import { useCreateCategory } from "@/app/api/categories/createCategory";
 import { useAuth } from "@/context/UserContext";
 
-const Modal = () => {
+const CategoryModal = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [categoryName, setCategoryName] = useState<string>("");
   const [categoryError, setCategoryError] = useState<boolean>(false);
@@ -109,4 +109,4 @@ const Modal = () => {
   );
 };
 
-export default Modal;
+export default CategoryModal;

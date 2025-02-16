@@ -26,7 +26,7 @@ export const useCreateCategory = () => {
   return useMutation({
     mutationFn: createCategory,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: "createCatgory" });
+      queryClient.invalidateQueries({ queryKey: "createCategory" });
     },
   });
 };

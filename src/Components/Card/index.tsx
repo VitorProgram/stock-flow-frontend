@@ -1,5 +1,7 @@
 "use client";
 import { useDeleteCategory } from "@/app/api/categories/deleteCategory";
+import { getCategory, useGetCategory } from "@/app/api/categories/getCategory";
+import { useDeleteItem } from "@/app/api/items/deleteItem";
 import { useAuth } from "@/context/UserContext";
 import { theme } from "@/theme";
 import {
@@ -11,29 +13,52 @@ import {
   Text,
   Title,
 } from "@mantine/core";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { BiEdit } from "react-icons/bi";
 import { MdDelete } from "react-icons/md";
 
 interface CardProps {
   name: string;
+  isItem?: true;
   categoryId?: string;
+  itemId?: string;
   imageUrl?: string;
   quantity?: number;
 }
 
-const Card = ({ name, categoryId, imageUrl, quantity }: CardProps) => {
+const Card = ({
+  name,
+  isItem,
+  categoryId,
+  itemId,
+  imageUrl,
+  quantity,
+}: CardProps) => {
   const { refreshUser } = useAuth();
-  const { mutate, isPending, isError, error } = useDeleteCategory();
+  const {
+    mutate: mutateCategory,
+    isPending: isPendingCategory,
+    isError: isErrorCategory,
+    error: errorCategory,
+  } = useDeleteCategory();
+
+  const {
+    mutate: mutateItem,
+    isPending: isPendingItem,
+    isError: isErrorItem,
+    error: errorItem,
+  } = useDeleteItem();
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const handleEditCategory = () => {
     router.push(`/dashboard/category/${categoryId}`);
   };
 
   const handleDeleteCategory = () => {
-    mutate(
+    mutateCategory(
       { id: categoryId as string },
       {
         onSuccess: () => {
@@ -41,7 +66,25 @@ const Card = ({ name, categoryId, imageUrl, quantity }: CardProps) => {
           refreshUser();
         },
         onError: () => {
-          console.log({ error });
+          console.log({ errorCategory });
+          return;
+        },
+      }
+    );
+  };
+
+  const handleDeleteItem = () => {
+    mutateItem(
+      { id: itemId as string },
+      {
+        onSuccess: () => {
+          console.log(`Item deletado.`);
+
+          // Busca novamente os dados da categoria
+          getCategory({ id: categoryId as string });
+        },
+        onError: (error) => {
+          console.log(`Erro ao deletar item: ${errorItem || error}`);
           return;
         },
       }
@@ -95,9 +138,10 @@ const Card = ({ name, categoryId, imageUrl, quantity }: CardProps) => {
           h={25}
           w={25}
           bg="none"
-          c={isError ? theme.colors.greenDark : theme.colors.red}
-          disabled={isPending}
-          onClick={handleDeleteCategory}
+          c={theme.colors.red}
+          disabled={isItem ? isPendingItem : isPendingCategory}
+          loading={isItem ? isPendingItem : isPendingCategory}
+          onClick={isItem ? handleDeleteItem : handleDeleteCategory}
         >
           <MdDelete size={15} />
         </Button>

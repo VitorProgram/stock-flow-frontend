@@ -5,7 +5,7 @@ interface CategoryProps {
   id: string;
 }
 
-const getCategory = async ({ id }: CategoryProps) => {
+export const getCategory = async ({ id }: CategoryProps) => {
   try {
     const response = await axios.get(`/categories/${id}`);
     return response.data;

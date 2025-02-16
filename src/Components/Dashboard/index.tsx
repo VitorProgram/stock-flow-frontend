@@ -1,7 +1,7 @@
 "use client";
 import { theme } from "@/theme";
 import { Center, Flex, Stack, Text, Title } from "@mantine/core";
-import Modal from "../Modal";
+import CategoryModal from "../Modais/CategoryModal";
 import Card from "../Card";
 import { useAuth } from "@/context/UserContext";
 
@@ -16,7 +16,7 @@ const Dashboard = () => {
       pb={16}
       style={{ overflowY: "scroll", scrollbarWidth: "none" }}
     >
-      <Modal />
+      <CategoryModal />
 
       {categories?.length === 0 || categories === undefined ? (
         <Center h={400} w="100%">

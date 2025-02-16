@@ -2,10 +2,11 @@
 
 import { useParams } from "next/navigation";
 import { useGetCategory } from "@/app/api/categories/getCategory";
-import { Flex, Stack, Text, Title } from "@mantine/core";
+import { Box, Flex, Stack, Text, Title } from "@mantine/core";
 import HeaderCategoryPage from "@/Components/Headers/HeaderCategoryPage";
 import { useAuth } from "@/context/UserContext";
 import Card from "@/Components/Card";
+import ItemModal from "@/Components/Modais/ItemModal";
 
 // Interface para os itens dentro da categoria
 interface ItemProps {
@@ -39,10 +40,20 @@ const CategoryPage = () => {
       {/* Header */}
       <HeaderCategoryPage categoryId={id} />
 
+      <Box pl={16} pr={16}>
+        <ItemModal categoryId={id} />
+      </Box>
+
       {/* Lista de Itens */}
       <Flex pl={16} pr={16} wrap="wrap" gap={24}>
         {category?.items.map((item) => (
-          <Card key={item.id} name={item.name} quantity={item.quantity} />
+          <Card
+            key={item.id}
+            name={item.name}
+            quantity={item.quantity}
+            isItem
+            itemId={item.id}
+          />
         ))}
       </Flex>
     </Stack>
