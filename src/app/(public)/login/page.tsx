@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast, Toaster } from "sonner";
 
 interface FormData {
   email: string;
@@ -25,16 +26,34 @@ const Login = () => {
   } = useForm<FormData>();
 
   const onSubmit = (data: FormData) => {
+    const myPromise = new Promise<{ name: string }>((resolve) => {
+      setTimeout(() => {
+        resolve({ name: "My toast" });
+      }, 3000);
+    });
+
+    toast.promise(myPromise, {
+      loading: "Carregando...",
+    });
+
     mutate(
       { email: data.email, password: data.password },
       {
         onSuccess: () => {
           console.log(`${data.email} fez login! Carregando dashboard...`);
+
+          toast.success("Login efetuado!", {
+            description: "Navegando para Dashboard",
+          });
+
           router.push("/dashboard");
         },
         onError: () => {
           setFormError("Erro ao fazer login, tente novamente");
           console.log({ error });
+          toast.error("Erro ao fazer login!", {
+            description: "Tente novamente",
+          });
           return;
         },
       }
@@ -43,6 +62,8 @@ const Login = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
+      <Toaster position="top-center" richColors />
+
       <Stack w="100%" align="center" justify="center" h="100vh" p={16} gap={50}>
         <Stack align="center">
           <Title order={2} c={theme.colors.greenDark}>

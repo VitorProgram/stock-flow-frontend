@@ -53,6 +53,11 @@ const CategoryPage = () => {
         </Center>
       ) : (
         <>
+          <Box pl={16}>
+            <Title order={5} fw={400} c={theme.colors.darkGray}>
+              Itens: {category?.items.length}
+            </Title>
+          </Box>
           {/* Lista de Itens */}
           <Flex pl={16} pr={16} wrap="wrap" gap={24}>
             {category?.items.map((item) => (
